@@ -10,6 +10,7 @@ class HangmanGame:
         self.secret = ""
         self.guessed = set()
         self.wrong = set()
+        self.attempted = set()
         self.lives = 6
         self.hint_used = False
 
@@ -17,6 +18,7 @@ class HangmanGame:
         self.secret = random.choice(WORDS[self.category])
         self.guessed.clear()
         self.wrong.clear()
+        self.attempted.clear()
         self.lives = 6
         self.hint_used = False
 
@@ -29,8 +31,9 @@ class HangmanGame:
     def guess(self, letter):
         if len(letter) != 1 or not letter.isalpha():
             return "Enter one letter."
-        if letter in self.guessed or letter in self.wrong:
+        if letter in self.attempted:
             return "Already guessed."
+        self.attempted.add(letter)
         if letter in self.secret:
             self.guessed.add(letter)
             return "Correct."
