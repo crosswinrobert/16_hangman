@@ -70,6 +70,9 @@ class HangmanGame:
                 hint = self.use_hint()
                 print(hint if hint else "Hint already used.")
                 continue
+            if raw.startswith("/"):
+                print("Unknown command. Use /hint or /quit.")
+                continue
             print(self.guess(raw))
 
         if self.won():
@@ -94,7 +97,7 @@ class HangmanGame:
             if difficulty == "q":
                 return
             if difficulty not in self.DIFFICULTIES:
-                print("Unknown difficulty.")
+                print("Unknown difficulty. Choose easy, medium, or hard.")
                 continue
             self.difficulty = difficulty
 
@@ -103,13 +106,17 @@ class HangmanGame:
             if raw == "q":
                 return
             if raw not in WORDS:
-                print("Unknown category.")
+                print("Unknown category. Choose one of the listed categories.")
                 continue
             self.category = raw
             if not self.play_round():
                 return
-            again = input("Another round? [y/n]: ").strip().lower()
-            if again != "y":
+            while True:
+                again = input("Another round? [y/n]: ").strip().lower()
+                if again in ("y", "n"):
+                    break
+                print("Please enter y or n.")
+            if again == "n":
                 print("Final score:", self.score, " Streak:", self.streak)
                 print("Rounds played:", self.stats.rounds, " Rounds won:", self.stats.wins, " Best streak:", self.stats.best_streak)
                 return
