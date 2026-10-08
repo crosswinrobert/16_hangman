@@ -4,15 +4,22 @@ from stats import SessionStats
 
 
 class HangmanGame:
+    DIFFICULTIES = {
+        "easy": {"lives": 8, "score": 1},
+        "medium": {"lives": 6, "score": 2},
+        "hard": {"lives": 4, "score": 3},
+    }
+
     def __init__(self):
         self.score = 0
         self.streak = 0
         self.category = "technology"
+        self.difficulty = "medium"
         self.secret = ""
         self.guessed = set()
         self.wrong = set()
         self.attempted = set()
-        self.lives = 6
+        self.lives = self.DIFFICULTIES[self.difficulty]["lives"]
         self.hint_used = False
         self.stats = SessionStats()
 
@@ -21,7 +28,7 @@ class HangmanGame:
         self.guessed.clear()
         self.wrong.clear()
         self.attempted.clear()
-        self.lives = 6
+        self.lives = self.DIFFICULTIES[self.difficulty]["lives"]
         self.hint_used = False
 
     def masked(self):
@@ -67,7 +74,8 @@ class HangmanGame:
 
         if self.won():
             self.streak += 1
-            self.score += 5 + self.streak
+            multiplier = self.DIFFICULTIES[self.difficulty]["score"]
+            self.score += (5 + self.streak) * multiplier
             self.stats.record(True, self.streak)
             print("Solved:", self.secret)
             return True
@@ -81,6 +89,15 @@ class HangmanGame:
         print("Hangman Challenge")
         print("A session consists of multiple rounds.")
         while True:
+            print("\nDifficulties:", ", ".join(self.DIFFICULTIES))
+            difficulty = input("Choose difficulty or q: ").strip().lower()
+            if difficulty == "q":
+                return
+            if difficulty not in self.DIFFICULTIES:
+                print("Unknown difficulty.")
+                continue
+            self.difficulty = difficulty
+
             print("\nCategories:", ", ".join(WORDS))
             raw = input("Choose category or q: ").strip().lower()
             if raw == "q":
